@@ -47,7 +47,7 @@ ScrollTracker.prototype.checkSection = function (scrollTop) {
     var index = 0;
 
     this.sections.each(function (i, el) {
-        if (scrollTop > el.offsetTop) {
+        if (scrollTop >= el.offsetTop) {
             index = i;
         }
     });
