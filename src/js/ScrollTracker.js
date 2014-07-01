@@ -45,17 +45,20 @@ ScrollTracker.prototype.checkSection = function (scrollTop) {
     }
 
     var index = 0;
+    var sectionId;
 
     this.sections.each(function (i, el) {
         if (scrollTop >= el.offsetTop) {
             index = i;
+            sectionId = el.id;
         }
     });
 
     if (this.sectionIndex !== index) {
         this.sectionIndex = index;
         this.emit('changeSection', {
-            index: index
+            index: index,
+            sectionId: sectionId
         });
     }
 };
