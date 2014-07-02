@@ -9944,6 +9944,8 @@ var ScrollTracker = function (opts) {
     this.$section = null;
     this.$window = $(window);
 
+    this.sectionOffset = isNaN(opts.sectionOffset) ? 0 : opts.sectionOffset;
+
     this.startTracking();
 };
 inherits(ScrollTracker, EventEmitter);
@@ -9975,6 +9977,7 @@ ScrollTracker.prototype.handleScroll = function () {
 
 ScrollTracker.prototype.getSection = function (scrollTop) {
     var $section = this.$section;
+    var sectionOffset = this.sectionOffset;
 
     if (!$section) {
         return null;
@@ -9988,7 +9991,7 @@ ScrollTracker.prototype.getSection = function (scrollTop) {
     var sectionId;
 
     $section.each(function (i, el) {
-        if (scrollTop >= el.offsetTop) {
+        if (scrollTop >= el.offsetTop + sectionOffset) {
             index = i;
             sectionId = el.id;
         }
@@ -10056,7 +10059,7 @@ ScrollTracker.prototype.jumpToSection = function (sectionSelector, duration, eas
         return null;
     }
 
-    return this.jumpTo(el.offsetTop, duration, easing);
+    return this.jumpTo(el.offsetTop + this.sectionOffset, duration, easing);
 };
 
 ScrollTracker.prototype.getSectionElementById = function (id) {
