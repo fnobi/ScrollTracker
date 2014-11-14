@@ -10,7 +10,7 @@ var ScrollTracker = function (opts) {
 
     this.startTracking();
 };
-inherits(ScrollTracker, EventEmitter);
+ScrollTracker = EventTrigger.extend(ScrollTracker);
 
 ScrollTracker.prototype.startTracking = function () {
     var self = this;
