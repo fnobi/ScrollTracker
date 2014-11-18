@@ -9369,7 +9369,13 @@ ScrollTracker.prototype.scrollTop = function () {
 
 ScrollTracker.prototype.setSections = function ($section) {
     this.$section = $section;
-    this.checkSection();
+
+    // そのまま呼ぶと、インスタンス化直後にsetされた
+    // onSectionChangeに反応しなくなってしまうため、非同期
+    var instance = this;
+    setTimeout(function () {
+        instance.checkSection();
+    });
 };
 
 ScrollTracker.prototype.handleScroll = function () {
