@@ -97,6 +97,7 @@ ScrollTracker.prototype.jumpTo = function (to, duration, easing) {
         return;
     }
 
+    var instance = this;
     var ticker = this.ticker;
 
     var start = this.scrollTop();
@@ -109,11 +110,14 @@ ScrollTracker.prototype.jumpTo = function (to, duration, easing) {
         if (t >= 1) {
             window.scrollTo(0, to);
             ticker.off('tick', loop);
+            instance.unlock();
             return;
         }
         window.scrollTo(0, start + (to - start) * easing(t));
     };
     ticker.on('tick', loop);
+    
+    this.lock();
 };
 
 ScrollTracker.prototype.jumpToSection = function (sectionSelector, duration, easing) {
@@ -147,4 +151,12 @@ ScrollTracker.prototype.getSectionElementByIndex = function (index) {
     }
 
     return $section.get(index);
+};
+
+ScrollTracker.prototype.lock = function () {
+    document.body.style.overflow = 'hidden';
+};
+
+ScrollTracker.prototype.unlock = function () {
+    document.body.style.overflow = null;
 };
