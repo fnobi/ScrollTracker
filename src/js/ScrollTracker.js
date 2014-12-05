@@ -1,6 +1,7 @@
 var ScrollTracker = function (opts) {
     opts = opts || {};
     this.interval = opts.interval || 0;
+    this.ticker = opts.ticker || new Ticker({ clock:  25 });
 
     this.sectionIndex = null;
     this.$section = null;
@@ -88,11 +89,6 @@ ScrollTracker.prototype.jumpTo = function (to, duration, easing) {
     to = isNaN(to) ? 0 : to;
     duration = isNaN(duration) ? 500 : duration;
     easing = isNaN(easing) ? function (t) { return t; } : easing;
-    
-    var clock = 25;
-
-    var count = 0;
-    var start = this.scrollTop();
 
     if (duration <= 0) {
         setTimeout(function () {
@@ -101,18 +97,23 @@ ScrollTracker.prototype.jumpTo = function (to, duration, easing) {
         return;
     }
 
-    var loop = setInterval(function () {
-        count++;
-        var t = count / (duration / clock);
+    var ticker = this.ticker;
+
+    var start = this.scrollTop();
+    var time = 0;
+
+    var loop = function (e) {
+        time += e.delta;
+        var t = time / duration;
 
         if (t >= 1) {
             window.scrollTo(0, to);
-            clearInterval(loop);
+            ticker.off('tick', loop);
             return;
         }
-
         window.scrollTo(0, start + (to - start) * easing(t));
-    }, clock);
+    };
+    ticker.on('tick', loop);
 };
 
 ScrollTracker.prototype.jumpToSection = function (sectionSelector, duration, easing) {
