@@ -1,7 +1,7 @@
 {
   "name": "ScrollTracker",
   "description": "Manage scroll events and sections.",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "main": "src/js/ScrollTracker.js",
   "dependencies": {
     "jquery": "~2.1.1",
