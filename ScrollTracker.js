@@ -16,16 +16,6 @@ function throttle (fn, interval) {
     return exec;
 }
 
-
-
-
-
-
-
-
-
-
-
 var EventTrigger = new Function ();
 
 EventTrigger.prototype.initEventTrigger = function () {

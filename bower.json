@@ -5,7 +5,7 @@
   "main": "src/js/ScrollTracker.js",
   "dependencies": {
     "jquery": "~2.1.1",
-    "throttle": "~0.1.1",
+    "throttle": "~0.1.2",
     "event-trigger": "~0.1.1"
   }
 }
