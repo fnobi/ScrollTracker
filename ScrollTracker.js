@@ -9523,7 +9523,7 @@ ScrollTracker.prototype.checkSection = function (scrollTop) {
 ScrollTracker.prototype.jumpTo = function (to, duration, easing) {
     to = isNaN(to) ? 0 : to;
     duration = isNaN(duration) ? 500 : duration;
-    easing = isNaN(easing) ? function (t) { return t; } : easing;
+    easing = easing || function (t) { return t; };
 
     if (duration <= 0) {
         setTimeout(function () {
