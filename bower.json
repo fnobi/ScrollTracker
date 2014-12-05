@@ -7,6 +7,6 @@
     "jquery": "~2.1.1",
     "throttle": "~0.1.2",
     "event-trigger": "~0.1.1",
-    "Ticker": "~0.5.4"
+    "Ticker": "~0.6.0"
   }
 }

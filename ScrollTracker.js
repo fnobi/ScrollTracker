@@ -9331,9 +9331,112 @@ return jQuery;
 
 }));
 
+var Ticker = function (opts) {
+    this.clock = opts.clock || 20;
+    this.auto = !!opts.auto;
+
+    this.startTime = null;
+
+    this.periods = {};
+
+    this.initLoop();
+};
+Ticker = EventTrigger.extend(Ticker);
+
+Ticker.prototype.initLoop = function () {
+    this.loop = null;
+};
+
+Ticker.prototype.start = function () {
+    var instance = this;
+    
+    this.startTime = +(new Date());
+    this.prevTime = this.startTime;
+
+    this.loop = setInterval(function () {
+        instance.processTick();
+    }, this.clock);
+};
+
+Ticker.prototype.stop = function () {
+    if (!this.loop) {
+        return;
+    }
+    clearInterval(this.loop);
+    this.initLoop();
+};
+
+Ticker.prototype.processTick = function () {
+    var clock = this.clock;
+    var periods = this.periods;
+    var currentTime = +(new Date());
+
+    var e = {
+        time: currentTime - this.startTime,
+        periods: periods,
+        delta: currentTime - this.prevTime
+    };
+
+    this.emit('tick', e);
+
+    var value, name, duration;
+    for (name in periods) {
+        duration = periods[name].duration;
+        value = (currentTime - periods[name].startTime) / duration;
+        periods[name].value = value;
+    }
+
+    for (name in periods) {
+        if (periods[name].value >= 1) {
+            this.emit('period:' + name);
+            periods[name].value -= 1;
+        }
+    }
+
+    this.prevTime = currentTime;
+};
+
+Ticker.prototype.addPeriod = function (name, duration) {
+    this.periods[name] = {
+        duration: duration
+    };
+
+    this.initPeriod(name);
+};
+
+Ticker.prototype.initPeriod = function (name) {
+    if (!this.periods[name]) {
+        return;
+    }
+
+    this.periods[name].startTime = +(new Date());
+    this.periods[name].value = 0;
+};
+
+Ticker.prototype.emit = function (type) {
+    EventTrigger.prototype.emit.apply(this, arguments);
+};
+
+Ticker.prototype.on = function (type) {
+    var li = this._listeners;
+    if (type == 'tick' && this.auto && (!li || !li['tick'] || !li['tick'].length)) {
+        this.start();
+    }
+    EventTrigger.prototype.on.apply(this, arguments);
+};
+
+Ticker.prototype.off = function (type) {
+    EventTrigger.prototype.off.apply(this, arguments);
+    var li = this._listeners;
+    if (type == 'tick' && this.auto && (!li || !li['tick'] || !li['tick'].length)) {
+        this.stop();
+    }
+};
+
 var ScrollTracker = function (opts) {
     opts = opts || {};
     this.interval = opts.interval || 0;
+    this.ticker = opts.ticker || new Ticker({ clock:  25 });
 
     this.sectionIndex = null;
     this.$section = null;
@@ -9421,11 +9524,6 @@ ScrollTracker.prototype.jumpTo = function (to, duration, easing) {
     to = isNaN(to) ? 0 : to;
     duration = isNaN(duration) ? 500 : duration;
     easing = isNaN(easing) ? function (t) { return t; } : easing;
-    
-    var clock = 25;
-
-    var count = 0;
-    var start = this.scrollTop();
 
     if (duration <= 0) {
         setTimeout(function () {
@@ -9434,18 +9532,23 @@ ScrollTracker.prototype.jumpTo = function (to, duration, easing) {
         return;
     }
 
-    var loop = setInterval(function () {
-        count++;
-        var t = count / (duration / clock);
+    var ticker = this.ticker;
+
+    var start = this.scrollTop();
+    var time = 0;
+
+    var loop = function (e) {
+        time += e.delta;
+        var t = time / duration;
 
         if (t >= 1) {
             window.scrollTo(0, to);
-            clearInterval(loop);
+            ticker.off('tick', loop);
             return;
         }
-
         window.scrollTo(0, start + (to - start) * easing(t));
-    }, clock);
+    };
+    ticker.on('tick', loop);
 };
 
 ScrollTracker.prototype.jumpToSection = function (sectionSelector, duration, easing) {
