@@ -9527,7 +9527,7 @@ ScrollTracker.prototype.jumpTo = function (to, duration, easing) {
 
     if (duration <= 0) {
         setTimeout(function () {
-            window.scrollTop(0, to);
+            window.scrollTo(0, to);
         });
         return;
     }
