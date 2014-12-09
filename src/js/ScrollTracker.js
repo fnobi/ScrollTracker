@@ -158,5 +158,5 @@ ScrollTracker.prototype.lock = function () {
 };
 
 ScrollTracker.prototype.unlock = function () {
-    document.body.style.overflow = null;
+    document.body.style.overflow = 'visible';
 };
