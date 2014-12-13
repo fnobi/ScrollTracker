@@ -9538,6 +9538,10 @@ ScrollTracker.prototype.jumpTo = function (to, duration, easing) {
     var start = this.scrollTop();
     var time = 0;
 
+    if ((to - start) == 0) {
+        return;
+    }
+
     var loop = function (e) {
         time += e.delta;
         var t = time / duration;
