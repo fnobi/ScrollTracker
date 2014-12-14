@@ -9593,9 +9593,15 @@ ScrollTracker.prototype.getSectionElementByIndex = function (index) {
 };
 
 ScrollTracker.prototype.lock = function () {
-    document.body.style.overflow = 'hidden';
+    var body = document.body;
+    body.style.overflow = 'hidden';
+    $(body).on('touchmove.scrolltracker-lock', function (e) {
+        e.preventDefault();
+    });    
 };
 
 ScrollTracker.prototype.unlock = function () {
-    document.body.style.overflow = 'visible';
+    var body = document.body;
+    body.style.overflow = 'visible';
+    $(body).off('touchmove.scrolltracker-lock');
 };
