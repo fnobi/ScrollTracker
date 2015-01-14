@@ -9436,7 +9436,7 @@ Ticker.prototype.off = function (type) {
 var ScrollTracker = function (opts) {
     opts = opts || {};
     this.interval = opts.interval || 0;
-    this.ticker = opts.ticker || new Ticker({ clock:  25 });
+    this.ticker = opts.ticker || new Ticker({ clock: 25, auto: true });
 
     this.sectionIndex = null;
     this.$section = null;
@@ -9523,7 +9523,7 @@ ScrollTracker.prototype.checkSection = function (scrollTop) {
 ScrollTracker.prototype.jumpTo = function (to, duration, easing) {
     to = isNaN(to) ? 0 : to;
     duration = isNaN(duration) ? 500 : duration;
-    easing = easing || function (t) { return t; };
+    easing = easing || function (t) { return Math.pow(t, 1); };
 
     if (duration <= 0) {
         setTimeout(function () {
